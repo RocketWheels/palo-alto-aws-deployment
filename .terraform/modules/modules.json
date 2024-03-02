@@ -1,0 +1,1 @@
+{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"palo_alto_firewall","Source":"./modules/aws_instance","Dir":"modules/aws_instance"},{"Key":"palo_alto_panorama","Source":"./modules/panorama","Dir":"modules/panorama"}]}
