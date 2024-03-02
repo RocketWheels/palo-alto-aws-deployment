@@ -1,1 +1,0 @@
-hostname=PAFW-2024
