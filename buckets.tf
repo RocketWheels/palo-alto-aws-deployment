@@ -34,27 +34,21 @@ locals {
 #   # etag   = filemd5(each.value)
 # }
 
-resource "aws_s3_object" "bootstrap_folder" {
+resource "aws_s3_bucket_object" "bootstrap_folder" {
   for_each = toset(local.folders_to_upload)
   bucket   = aws_s3_bucket.bootstrap_bucket.id
   key      = each.value
   content  = ""
 }
 
-data "aws_s3_objects" "bootstrap_folder_contents" {
-  for_each = toset(local.folders_to_upload)
-  bucket = aws_s3_bucket.bootstrap_bucket.id
-  prefix = each.value
-}
-
-resource "aws_s3_object" "bootstrap_file" {
+resource "aws_s3_bucket_object" "bootstrap_file" {
   for_each = toset(local.folders_to_upload)
   bucket   = aws_s3_bucket.bootstrap_bucket.id
   key      = "${each.value}${basename(each.value)}/"
   source   = "${path.module}/palo_bootstrap/${each.value}"
-  content  = length(fileset("${path.module}/palo_bootstrap/${each.value}", "*")) == 0 ? "" : null
+#  etag     = filemd5("${path.module}/palo_bootstrap/${each.value}")
 
-  depends_on = [aws_s3_object.bootstrap_folder]
+  depends_on = [aws_s3_bucket_object.bootstrap_folder]
 }
 
 resource "aws_s3_bucket_object" "bootstrap_config" {
