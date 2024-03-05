@@ -24,15 +24,44 @@ locals {
   ]
 }
 
-resource "aws_s3_bucket_object" "bootstrap_file" {
-  for_each = toset(local.folders_to_upload)
+# resource "aws_s3_bucket_object" "bootstrap_file" {
+#   for_each = toset(local.folders_to_upload)
 
-  bucket = aws_s3_bucket.bootstrap_bucket.id
-  key    = each.value
-  content = ""
-  # etag   = filemd5(each.value)
+#   bucket = aws_s3_bucket.bootstrap_bucket.id
+#   key    = each.value
+#   content = ""
+#   # etag   = filemd5(each.value)
+# }
+
+resource "aws_s3_bucket_object" "bootstrap_folder" {
+  for_each = toset(local.folders_to_upload)
+  bucket   = aws_s3_bucket.bootstrap_bucket.id
+  key      = each.value
+  content  = ""
 }
 
+# The for_each argument is modified to use toset(flatten([...])) to create a flat list of file paths.
+# Inside the for_each block, a nested for loop is used to iterate over each folder in local.folders_to_upload.
+# The fileset function is used to retrieve the list of files within each folder.
+# The resulting file paths are in the format "${folder}${file}", representing the relative path to each file.
+# The key argument is set to the file path (each.value).
+# The source and etag arguments are updated to use the file path ("${path.module}/palo_bootstrap/${each.value}").
+
+resource "aws_s3_bucket_object" "bootstrap_file" {
+  for_each = toset(flatten([
+    for folder in local.folders_to_upload : [
+      for file in fileset("${path.module}/palo_bootstrap/${folder}", "*") : "${folder}${file}"
+    ]
+  ]))
+  bucket = aws_s3_bucket.bootstrap_bucket.id
+  key    = each.value
+  source = "${path.module}/palo_bootstrap/${each.value}"
+  etag   = filemd5("${path.module}/palo_bootstrap/${each.value}")
+
+  depends_on = [aws_s3_bucket_object.bootstrap_folder]
+}
+
+#Creates the init-cfg.txt file as this is the only file required to bootstrap
 resource "aws_s3_bucket_object" "bootstrap_config" {
   bucket = aws_s3_bucket.bootstrap_bucket.id
   key    = "config/init-cfg.txt"
