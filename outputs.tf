@@ -17,6 +17,11 @@ output "public_ip_firewalls" {
 output "bucket_name" {
   value = aws_s3_bucket.bootstrap_bucket.id
 }
-output "bucket" {
-  value = aws_s3_bucket.bootstrap_bucket.bucket
+
+output "file_list" {
+  value = toset(flatten([
+    for folder in local.folders_to_upload : [
+      for file in fileset("${path.module}/palo_bootstrap/${folder}", "*") : "${folder}${file}"
+    ]
+  ]))
 }
