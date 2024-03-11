@@ -2,6 +2,10 @@ variable "ami_id" {
   description = "AMI ID for the AWS instance"
 }
 
+variable "firewall_count" {
+  description = "amount of firewalls desired"
+}
+
 variable "instance_type" {
   description = "Instance type for the AWS instance"
 }

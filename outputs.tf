@@ -7,9 +7,10 @@
 #   value = aws_instance.palo_alto_firewall.public_ip
 # }
 
-output "public_ip_firewalls" {
-  value = module.palo_alto_firewall.public_ip
-}
+# output "public_ip_firewalls" {
+#   value = module.palo_alto_firewall[count.index].public_ip
+# }
+
 # output "public_ip_panorama" {
 #   value = module.palo_alto_panorama.public_ip
 # }

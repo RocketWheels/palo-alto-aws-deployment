@@ -7,7 +7,7 @@ resource "aws_key_pair" "deployer" {
 
 module "palo_alto_firewall" {
   source = "./modules/aws_instance"
-
+  firewall_count = var.firewall_count
   ami_id           = "ami-03810899027cb545e"
   instance_type    = "c5n.xlarge"
   subnet_id        = aws_subnet.main.id

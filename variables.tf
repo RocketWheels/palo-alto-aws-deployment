@@ -9,3 +9,8 @@ variable "infisical_service_token" {
   type = string
   sensitive = true
 }
+
+variable "firewall_count" {
+  description = "amount of firewalls desired"
+  default = 2
+}
