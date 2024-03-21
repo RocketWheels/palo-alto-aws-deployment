@@ -2,7 +2,7 @@
 # Define a resource block for an AWS Key Pair, which will be used to authenticate SSH access to EC2 instances.
 resource "aws_key_pair" "deployer" {
   key_name   = "deployer-key"
-  public_key = data.infisical_secrets.my-secrets.secrets["PALO_FW_PUB_KEY"].value
+  public_key = data.vault_generic_secret.my_secrets.data["value"]
 }
 
 module "palo_alto_firewall" {

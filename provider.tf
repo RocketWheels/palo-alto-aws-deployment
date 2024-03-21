@@ -7,27 +7,29 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 3.0"
     }
-
-    infisical = {
-      # version = <latest version>
-      source = "infisical/infisical"
-    }
   }
 }
-
-provider "infisical" {
-    host          = var.infisical_hostname
-    service_token = var.infisical_service_token
+provider "vault" {
+  # Provider configuration
+  address = var.vault_hostname # The address of the Vault server
+  token   = var.vault_token # Your Vault token
+  # You can also specify other parameters like namespace, if you're using Vault Enterprise, etc.
 }
 
-data "infisical_secrets" "my-secrets" {
-  env_slug    = "dev"
-  folder_path = "/"
+# Read AWS secrets from Vault
+data "vault_generic_secret" "aws_secrets" {
+  path = "aws/creds/admin" # Replace with the actual path to your AWS secrets in Vault
 }
+
+data "vault_generic_secret" "my_secrets" {
+  path = "kv/pub-key"
+}
+
 
 # Configure the AWS Provider
 provider "aws" {
   region     = "us-east-1"
-  access_key = data.infisical_secrets.my-secrets.secrets["AWS_ACCESS_KEY"].value
-  secret_key = data.infisical_secrets.my-secrets.secrets["AWS_SECRET_KEY"].value
+  access_key = data.vault_generic_secret.aws_secrets.data["access_key"]
+  secret_key = data.vault_generic_secret.aws_secrets.data["secret_key"]
+  token      = data.vault_generic_secret.aws_secrets.data["security_token"]
 }

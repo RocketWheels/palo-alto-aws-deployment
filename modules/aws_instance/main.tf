@@ -45,8 +45,7 @@ output "s3_bucket_name" {
 }
 
 resource "aws_iam_role" "palo_alto_s3_access" {
-  count = var.firewall_count
-  name = "palo_alto_s3_access-${count.index}"
+  name = "palo_alto_s3_access"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -62,8 +61,7 @@ resource "aws_iam_role" "palo_alto_s3_access" {
 
 
 resource "aws_iam_policy" "s3_read_policy" {
-  count = var.firewall_count
-  name   = "S3ReadPolicyForPaloAlto-${count.index}"
+  name   = "S3ReadPolicyForPaloAlto"
   policy = jsonencode({
    "Version": "2012-10-17", 
    "Statement": [ 
@@ -83,11 +81,11 @@ resource "aws_iam_policy" "s3_read_policy" {
 
 resource "aws_iam_role_policy_attachment" "s3_read_policy_attach" {
   count = var.firewall_count
-  role       = aws_iam_role.palo_alto_s3_access[count.index].name
-  policy_arn = aws_iam_policy.s3_read_policy[count.index].arn
+  role       = aws_iam_role.palo_alto_s3_access.name
+  policy_arn = aws_iam_policy.s3_read_policy.arn
 }
 
 resource "aws_iam_instance_profile" "palo_alto_profile" {
   count = var.firewall_count
-  role = aws_iam_role.palo_alto_s3_access[count.index].id
+  role = aws_iam_role.palo_alto_s3_access.id
 }

@@ -1,10 +1,10 @@
-variable "infisical_hostname" {
+variable "vault_hostname" {
   description = "hostname to retreve secrets"
   type = string
   sensitive = true
 }
 
-variable "infisical_service_token" {
+variable "vault_token" {
   description = "token to authenticate"
   type = string
   sensitive = true
@@ -12,5 +12,5 @@ variable "infisical_service_token" {
 
 variable "firewall_count" {
   description = "amount of firewalls desired"
-  default = 2
+  default = 1
 }
