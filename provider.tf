@@ -25,11 +25,25 @@ data "vault_generic_secret" "my_secrets" {
   path = "kv/pub-key"
 }
 
+data "vault_generic_secret" "static_aws_key" {
+  path = "kv/access-key"
+}
 
-# Configure the AWS Provider
+data "vault_generic_secret" "static_aws_secret" {
+  path = "kv/access-secret"
+}
+
 provider "aws" {
   region     = "us-east-1"
-  access_key = data.vault_generic_secret.aws_secrets.data["access_key"]
-  secret_key = data.vault_generic_secret.aws_secrets.data["secret_key"]
-  token      = data.vault_generic_secret.aws_secrets.data["security_token"]
+  access_key = data.vault_generic_secret.static_aws_key.data["value"]
+  secret_key = data.vault_generic_secret.static_aws_secret.data["value"]
 }
+
+# Configure the AWS Provider
+# Code reserved for dynamc values from Hashicorp vault
+# provider "aws" {
+#   region     = "us-east-1"
+#   access_key = data.vault_generic_secret.aws_secrets.data["access_key"]
+#   secret_key = data.vault_generic_secret.aws_secrets.data["secret_key"]
+#   token      = data.vault_generic_secret.aws_secrets.data["security_token"]
+# }
